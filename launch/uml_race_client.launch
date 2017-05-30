@@ -1,0 +1,6 @@
+<launch>
+	<node pkg="uml_race_client" type="uml_race_client_node" name="uml_race_solution" output="screen">
+		<remap from="cmd_vel" to="/robot/cmd_vel" />
+		<remap from="base_scan" to="/robot/base_scan" />
+	</node>
+</launch>
