@@ -5,18 +5,25 @@
 ros::Subscriber sub;
 ros::Publisher pub;
 
+float p_ang = 0;
+
 void raceCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 	geometry_msgs::Twist twist;
 	geometry_msgs::Vector3 angular;
 	geometry_msgs::Vector3 linear;
 
-	angular.z = (scan->ranges[scan->ranges.size() - 1] - scan->ranges[0]);
 	
-	angular.z *= angular.z * angular.z;
+	float ang = (scan->ranges[scan->ranges.size() - 1] - scan->ranges[0]);
+	float d_ang = p_ang - ang;
+	p_ang = ang;
 
-	const float lim = 0.6;
-	if (angular.z > lim) angular.z = lim;
-	if (angular.z < -lim) angular.z = -lim;
+	angular.z = 0.8 * ang - 4.0 * d_ang;
+	
+	//angular.z *= angular.z * angular.z;
+
+	const float lim = 8.0;
+	//if (angular.z > lim) angular.z = lim;
+	//if (angular.z < -lim) angular.z = -lim;
 
 	linear.x = 1;
 	
