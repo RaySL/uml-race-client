@@ -5,7 +5,7 @@
 ros::Subscriber sub;
 ros::Publisher pub;
 
-float p_ang = 0;
+double p_ang = 0;
 
 void raceCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 	geometry_msgs::Twist twist;
@@ -13,21 +13,31 @@ void raceCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 	geometry_msgs::Vector3 linear;
 
 	
-	float ang = (scan->ranges[scan->ranges.size() - 1] - scan->ranges[0]);
-	float d_ang = p_ang - ang;
+	double d_term, p_term, speed;
+	ros::param::get("/uml_race_solution/proportional_term", p_term);
+	ros::param::get("/uml_race_solution/derivative_term", d_term);	
+	ros::param::get("/uml_race_solution/speed", speed);
+	
+	double ang = (scan->ranges[scan->ranges.size() - 1] - scan->ranges[0]);
+	double d_ang = p_ang - ang;
 	p_ang = ang;
 
-	angular.z = 0.8 * ang - 4.0 * d_ang;
-	
-	//angular.z *= angular.z * angular.z;
+	angular.z = p_term * ang - d_term * d_ang;
+	angular.z /= (1.0 + 0.5 * scan->ranges[scan->ranges.size() / 2]);	
+	angular.z *= angular.z * angular.z;
 
-	const float lim = 8.0;
+	const double lim = 8.0;
 	//if (angular.z > lim) angular.z = lim;
 	//if (angular.z < -lim) angular.z = -lim;
-
-	linear.x = 1;
 	
-	ROS_INFO("Intensities: %f, %f", scan->ranges[0], scan->ranges[scan->ranges.size() - 1]);	
+	speed *= scan->ranges[scan->ranges.size() / 2];
+	//speed += 0.1;	
+	
+	if (speed > 4.99) speed = 4.99;
+
+	linear.x = speed;
+	
+	//ROS_INFO("P: %f, D: %f", ang, d_ang);	
 
 	twist.angular = angular;
 	twist.linear = linear;
