@@ -18,13 +18,13 @@ void raceCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 	ros::param::get("/uml_race_solution/derivative_term", d_term);	
 	ros::param::get("/uml_race_solution/speed", speed);
 	
-	double ang = (scan->ranges[scan->ranges.size() - 1] - scan->ranges[0]);
+	double ang = (scan->ranges[scan->ranges.size() * 7 / 8] - scan->ranges[scan->ranges.size() / 8]);
 	double d_ang = p_ang - ang;
 	p_ang = ang;
 
 	angular.z = p_term * ang - d_term * d_ang;
 	angular.z /= (1.0 + 0.5 * scan->ranges[scan->ranges.size() / 2]);	
-	angular.z *= angular.z * angular.z;
+	//angular.z *= angular.z * angular.z;
 
 	const double lim = 8.0;
 	//if (angular.z > lim) angular.z = lim;
@@ -33,7 +33,7 @@ void raceCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 	speed *= scan->ranges[scan->ranges.size() / 2];
 	//speed += 0.1;	
 	
-	if (speed > 4.99) speed = 4.99;
+	if (speed > 3.0) speed = 5-1e-10;
 
 	linear.x = speed;
 	

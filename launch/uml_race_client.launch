@@ -3,8 +3,8 @@
 		<remap from="cmd_vel" to="/robot/cmd_vel" />
 		<remap from="base_scan" to="/robot/base_scan" />
 
-		<param name="proportional_term" value="1.5" type="double" />
-		<param name="derivative_term" value="0.6" type="double" />
-		<param name="speed" value="1.8" type="double" />
+		<param name="proportional_term" value="1.4" type="double" />
+		<param name="derivative_term" value="0.5" type="double" />
+		<param name="speed" value="1.6" type="double" />
 	</node>
 </launch>
