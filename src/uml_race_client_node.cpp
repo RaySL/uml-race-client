@@ -24,20 +24,12 @@ void raceCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
 
 	angular.z = p_term * ang - d_term * d_ang;
 	angular.z /= (1.0 + 0.5 * scan->ranges[scan->ranges.size() / 2]);	
-	//angular.z *= angular.z * angular.z;
-
-	const double lim = 8.0;
-	//if (angular.z > lim) angular.z = lim;
-	//if (angular.z < -lim) angular.z = -lim;
 	
 	speed *= scan->ranges[scan->ranges.size() / 2];
-	//speed += 0.1;	
 	
 	if (speed > 3.0) speed = 5-1e-10;
 
 	linear.x = speed;
-	
-	//ROS_INFO("P: %f, D: %f", ang, d_ang);	
 
 	twist.angular = angular;
 	twist.linear = linear;
